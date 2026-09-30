@@ -7,12 +7,14 @@ on:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, nas]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          repository: NousResearch/hermes-agent
       - name: Push to Gitea
-        run: git push --mirror "$GITEA_PUSH_URL"
-        env:
-          GITEA_PUSH_URL: ${{ secrets.GITEA_PUSH_URL }}
+        run: |
+          GITEA_URL=$(cat /opt/data/runner/.gitea_push_url)
+          git remote add gitea "$GITEA_URL"
+          git push --mirror gitea
